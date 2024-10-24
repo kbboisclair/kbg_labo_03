@@ -21,13 +21,13 @@ export default class CachedRequestsManager {
                 ETag,
                 Expire_Time: utilities.nowInSeconds() + repositoryCachesExpirationTime
             });
-            console.log(BgWhite + FgBlue, `[Data of ${url} request has been cached]`);
+            console.log(BgYellow + FgBlue, `[Data of ${url} request has been cached]`);
         }
     }
     static startCachedRequestsCleaner(){
         // periodic cleaning of expired cached request data
         setInterval(CachedRequestsManager.flushExpired, repositoryCachesExpirationTime * 1000);
-        console.log(BgWhite + FgBlue, "[Periodic requests data caches cleaning process started...]");
+        console.log(BgYellow + FgBlue, "[Periodic requests data caches cleaning process started...]");
     }
     
     static find(url){
@@ -43,7 +43,7 @@ export default class CachedRequestsManager {
                 }
             }
         } catch (error) {
-            console.log(BgWhite + FgRed, "[request cache error!]", error);
+            console.log(BgYellow + FgRed, "[request cache error!]", error);
         }
         return null;
     }
@@ -68,15 +68,6 @@ export default class CachedRequestsManager {
         cachedRequests = cachedRequests.filter( cache => cache.Expire_Time > now);
     }
     static get(HttpContext){
-        // let cache = CachedRequestsManager.find(HttpContext.req.url);
-        // if(cache){
-        //     console.log(FgCyan + Bright, "Response header ETag key:", cache.ETag);
-        //     HttpContext.response.ETag(cache.ETag);
-        //     HttpContext.response.JSON(cache.content, cache.ETag, true);
-        //     return true;
-        // }
-        // return false
-
         let url = HttpContext.req.url;
         let cached = CachedRequestsManager.find(url);
         if (cached != null) {
@@ -85,8 +76,4 @@ export default class CachedRequestsManager {
         }
         return false;
     }
-
-
-
-
 }
