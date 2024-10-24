@@ -7,7 +7,6 @@ import RepositoryCachesManager from "./repositoryCachesManager.js";
 global.jsonFilesPath = "jsonFiles";
 global.repositoryEtags = {};
 
-
 export default class Repository {
     constructor(ModelClass, cached = true) {
         this.objectsList = null;

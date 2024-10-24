@@ -1,7 +1,10 @@
 import * as utilities from "./utilities.js";
 import * as serverVariables from "./serverVariables.js";
+import Repository from "./models/repository.js";
+    
 
-let repositoryCachesExpirationTime = serverVariables.get("main.repository.CacheExpirationTime");
+
+let repositoryCachesExpirationTime = serverVariables.get("main.resquest.CacheExpirationTime");
 
 
 global.cachedRequests = [];
@@ -37,7 +40,7 @@ export default class CachedRequestsManager {
                     if (cache.url == url) {
                         // renew cache
                         cache.Expire_Time = utilities.nowInSeconds() + repositoryCachesExpirationTime;
-                        console.log(BgWhite + FgBlue, `[${cache.url} data retrieved from cache]`);
+                        console.log(BgYellow + FgBlue, `[${cache.url} data retrieved from cache]`);
                         return cache;
                     }
                 }
@@ -62,13 +65,14 @@ export default class CachedRequestsManager {
         let now = utilities.nowInSeconds();
         for (let cache of cachedRequests) {
             if (cache.Expire_Time <= now) {
-                console.log(BgWhite + FgBlue, "Cached request data of " + cache.url + " expired");
+                console.log(BgYellow + FgBlue, "Cached request data of " + cache.url + " expired");
             }
         }
         cachedRequests = cachedRequests.filter( cache => cache.Expire_Time > now);
     }
     static get(HttpContext){
         let url = HttpContext.req.url;
+        let repositoryEtag = Repository.getETag(url);
         let cached = CachedRequestsManager.find(url);
         if (cached != null) {
             HttpContext.response.JSON(cached.content, cached.ETag, true)
